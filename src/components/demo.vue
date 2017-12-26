@@ -1,6 +1,5 @@
 <template>
 	<div class="container">
-    <button class="show" @click="addNode">添加</button>
 		<svg id="svg" class="demo"></svg>
 	</div>
 </template>
@@ -43,13 +42,7 @@ export default {
             },
             {
               name: '子节点1',
-              id: '1-1',
-              children: [
-                {
-                  name: 'safasfdasf',
-                  id: '1-2'
-                }
-              ]
+              id: '1-1'
             }
           ]
         }
@@ -77,7 +70,7 @@ export default {
       obj.children = []
       return obj
     },
-    /** @description 画一个文本框
+    /** @description 画节点并给节点添加事件
      *  @augments node 文本节点
      *  @returns 返回文本和框线的组合对象
      */
@@ -96,20 +89,14 @@ export default {
       g.add(rect, text)
       g.addClass('node ' + node.id)
       g.click(function (e) {
-        Snap.selectAll('.node').forEach(function (item) {
-          item.children()[0].attr({
-            fill: '#fff',
-            stroke: '#000',
-            strokeWidth: 1
-          })
+        Snap.selectAll('.active rect').attr({
+          fill: '#fff'
         })
+        g.addClass('active')
         rect.attr({
-          fill: '#bada55',
-          stroke: '#000',
-          strokeWidth: 1
+          fill: '#bada55'
         })
         _this.selectedNode = node
-        console.log(_this.selectedNode)
       })
       g.mousedown(function (e) {
         if (e.button === 2) {
@@ -169,18 +156,14 @@ export default {
     },
     /** @description init
      */
-    test () {
+    init () {
       this.svgInstance = Snap('#svg')
       let root = this.transformData(this.data, null)
       this.drawFlowChart(root)
-    },
-    /** @description 添加子节点 */
-    addNode () {
-
     }
   },
   mounted () {
-    this.test()
+    this.init()
   }
 }
 </script>
@@ -188,7 +171,6 @@ export default {
 	.demo {
 		width:800px;
 		height:500px;
-    border: 1px solid #ccc;
 	}
   .node{
     cursor: pointer;
