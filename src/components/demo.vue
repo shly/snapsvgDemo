@@ -59,7 +59,7 @@ export default {
     */
     Node (value, id, x, y) {
       let obj = {}
-      let width = value.length * this.fontSize + 20
+      let width = this.getStrBytes(value) * this.fontSize / 2 + 20
       let height = this.fontSize + 10
       obj.value = value
       obj.id = id
@@ -69,6 +69,10 @@ export default {
       obj.height = height
       obj.children = []
       return obj
+    },
+    /** @description 获取字符串字节数，一个汉字两个字节 */
+    getStrBytes (str) {
+      return str.replace(/[^\x00-\xff]/g, 'aa').length
     },
     /** @description 画节点并给节点添加事件
      *  @augments node 文本节点
