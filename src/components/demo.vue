@@ -41,7 +41,7 @@ export default {
               ]
             },
             {
-              name: '子节点1',
+              name: '这是一个有很长名字的节点',
               id: '1-1'
             }
           ]
@@ -55,9 +55,9 @@ export default {
      *  @augments id 节点id
      *  @augments x 节点左上角x坐标
      *  @augments y 节点左上角y坐标
-     *  @returns 返回节点对象，包括节点内容，节点左上角坐标和节点的宽度和高度
+     *  @returns 返回节点对象，包括节点内容，节点左上角坐标，节点的宽度、高度，子节点列表，子节点中叶子节点的个数(为了计算占用空间)
     */
-    Node (value, id, x, y) {
+    Node (value = '', id = '', leafCount = 0, x = 0, y = 0) {
       let obj = {}
       let width = this.getStrBytes(value) * this.fontSize / 2 + 20
       let height = this.fontSize + 10
@@ -67,8 +67,23 @@ export default {
       obj.y = y
       obj.width = width
       obj.height = height
+      obj.leafCount = leafCount
       obj.children = []
       return obj
+    },
+    /** @description 获取节点中子节点的个数 */
+    getLeafCount (data, sum) {
+      data.forEach(item => {
+        if (item.children && item.children.length > 0) {
+          let temp = this.getLeafCount(item.children, sum)
+          sum += (temp === 0 ? 1 : temp)
+          this.$set(item, 'leafCount', sum)
+        } else {
+          this.$set(item, 'leafCount', 0)
+          sum += 1
+        }
+      })
+      return sum
     },
     /** @description 获取字符串字节数，一个汉字两个字节 */
     getStrBytes (str) {
@@ -129,7 +144,7 @@ export default {
       let _this = this
       let root = null
       if (parentNode === null) {
-        root = this.Node(data[0].name, data[0].id, this.rootPosition.x, this.rootPosition.x)
+        root = this.Node(data[0].name, data[0].id, data[0].leafCount, this.rootPosition.x, this.rootPosition.x)
         data = data[0].children
         this.transformData(data, root)
       } else {
@@ -138,7 +153,7 @@ export default {
         let len = data.length
         let baseY = (2 * root.y - (len - 1) * (root.height + this.verticalSpace)) / 2
         data.forEach(function (item, i) {
-          let node = _this.Node(item.name, item.id, childNodesX, baseY + i * (root.height + _this.verticalSpace))
+          let node = _this.Node(item.name, item.id, data[0].leafCount, childNodesX, baseY + i * (root.height + _this.verticalSpace))
           root.children.push(node)
           if (item.children && item.children.length > 0) {
             _this.transformData(item.children, node)
@@ -162,6 +177,7 @@ export default {
      */
     init () {
       this.svgInstance = Snap('#svg')
+      this.getLeafCount(this.data, 0)
       let root = this.transformData(this.data, null)
       this.drawFlowChart(root)
     }
