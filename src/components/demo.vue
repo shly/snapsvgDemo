@@ -1,11 +1,16 @@
 <template>
 	<div class="container">
 		<svg id="svg" class="demo"></svg>
+    <context-menu :items="menuList" @chooseItem="chooseItem" v-if="showContextMenu"></context-menu>
 	</div>
 </template>
 <script>
 import Snap from 'snapsvg'
+import contextMenu from './contextMenu'
 export default {
+  components: {
+    contextMenu
+  },
   data () {
     return {
       svgInstance: {},
@@ -63,7 +68,22 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      menuList: [
+        {
+          name: '新增子节点',
+          value: 1
+        },
+        {
+          name: '删除子节点',
+          value: 2
+        },
+        {
+          name: '编辑子节点',
+          value: 3
+        }
+      ],
+      showContextMenu: false
     }
   },
   methods: {
@@ -89,6 +109,7 @@ export default {
       obj.children = []
       return obj
     },
+    /** @description 定义一个条件节点 */
     ConditionNode (value = '') {
       let obj = {}
       let width = this.getStrBytes(value) * this.conditionFontSize / 2 + 10
@@ -135,23 +156,32 @@ export default {
       let g = this.svgInstance.g()
       g.add(rect, text)
       g.addClass('node ' + node.id)
-      g.click(function (e) {
-        Snap.selectAll('.active rect').attr({
-          stroke: '#ccc'
-        })
-        g.addClass('active')
-        rect.attr({
-          stroke: 'red'
-        })
-        _this.selectedNode = node
-      })
-      g.mousedown(function (e) {
-        if (e.button === 2) {
-          alert(node.value)
-        }
-      })
+      g.node.onclick = _this.onNodeClick
+      g.node.oncontextmenu = _this.onContextMenu
       return node
     },
+    /** @description 单击节点事件 */
+    onNodeClick (e) {
+      Snap.selectAll('.active rect').attr({
+        stroke: '#ccc'
+      })
+      g.addClass('active')
+      rect.attr({
+        stroke: 'red'
+      })
+      this.selectedNode = node
+    },
+    /** @description 节点的鼠标右键事件 */
+    onContextMenu (e) {
+      let _this = this
+      _this.showContextMenu = true
+      _this.$nextTick(() => {
+        document.querySelector('.contextMenu-Container').style.left = e.screenX + 'px'
+        document.querySelector('.contextMenu-Container').style.top = e.screenY + 'px'
+      })
+      return false
+    },
+    /** @description 画条件节点 */
     drawConditionNode (node) {
       let rect = this.svgInstance.rect(node.x, node.y, node.width, node.height, 2)
       rect.attr({
@@ -250,6 +280,10 @@ export default {
       this.getLeafCount(this.data)
       let root = this.transformData(this.data, null)
       this.drawFlowChart(root)
+    },
+    chooseItem (value) {
+      this.showContextMenu = false
+      alert('点击了' + value)
     }
   },
   mounted () {
@@ -257,7 +291,9 @@ export default {
   }
 }
 </script>
-<style>
+<style lang='less'>
+.container {
+  position: relative;
 	.demo {
 		width:1200px;
 		height:800px;
@@ -265,4 +301,5 @@ export default {
   .node{
     cursor: pointer;
   }
+}
 </style>
