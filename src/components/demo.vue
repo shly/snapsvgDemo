@@ -56,7 +56,15 @@ export default {
               ]
             },
             {
-              name: 'testtesttesttesttesttesttesttesttesttesttesttesttesttest'
+              name: 'testtesttesttesttesttesttesttesttesttesttesttesttesttest',
+              children: [
+                {
+                  name: '测试子节点-1'
+                },
+                {
+                  name: '测试子节点-2'
+                }
+              ]
             },
             {
               name: '子节点2',
@@ -82,7 +90,12 @@ export default {
               ]
             },
             {
-              name: 'testtesttesttesttesttesttest'
+              name: 'testtesttesttesttesttesttest',
+              children: [
+                {
+                  name: '测试子节点'
+                }
+              ]
             },
             {
               name: '子节点3',
@@ -186,7 +199,8 @@ export default {
       let line = this.svgInstance.path(path)
       line.attr({
         stroke: '#000',
-        strokeWidth: 1
+        strokeWidth: 1,
+        'stroke-dasharray': '5, 10'
       })
     },
     /** @description 将数据封装成节点对象,并赋予节点位置信息
@@ -251,7 +265,7 @@ export default {
 </script>
 <style>
 	.demo {
-		width:800px;
+		width:1000px;
 		height:800px;
 	}
   .node{
