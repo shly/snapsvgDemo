@@ -13,7 +13,7 @@ export default {
       horizonSpace: 60,
       verticalSpace: 20,
       rootPosition: {
-        x: 100,
+        x: 50,
         y: 300
       },
       selectedNode: {},
@@ -59,7 +59,7 @@ export default {
               name: 'testtesttesttesttesttesttesttesttesttesttesttesttesttest'
             },
             {
-              name: '子节点2子节点2子节点',
+              name: '子节点2',
               id: '1-1',
               children: [
                 {
@@ -206,20 +206,14 @@ export default {
         let baseY = root.y - (root.leafCount - 1) * (root.height + this.verticalSpace) / 2
         data.forEach(function (item, i) {
           let PosY = 0
-          if (i === 0 && item.leafCount === 0) {
-            PosY = baseY
-          } else if (i === 0) {
-            PosY = baseY + (item.leafCount - 1) * (root.height + _this.verticalSpace) / 2
-          } else if (i > 0 && item.leafCount === 0) {
+          let leafCount = item.leafCount === 0 ? 1 : item.leafCount
+          if (i === 0) {
+            PosY = baseY + (leafCount - 1) * (root.height + _this.verticalSpace) / 2
+          } else {
             let preNode = root.children[i - 1]
             let perNodeLeaf = preNode.leafCount === 0 ? 1 : preNode.leafCount
             let base = preNode.y + (perNodeLeaf + 1) * (preNode.height + _this.verticalSpace) / 2
-            PosY = base
-          } else if (i > 0) {
-            let preNode = root.children[i - 1]
-            let perNodeLeaf = preNode.leafCount === 0 ? 1 : preNode.leafCount
-            let base = preNode.y + (perNodeLeaf + 1) * (preNode.height + _this.verticalSpace) / 2
-            PosY = base + (item.leafCount - 1) * (root.height + _this.verticalSpace) / 2
+            PosY = base + (leafCount - 1) * (root.height + _this.verticalSpace) / 2
           }
           let node = _this.Node(item.name, item.id, item.leafCount, childNodesX, PosY)
           root.children.push(node)
@@ -258,7 +252,7 @@ export default {
 <style>
 	.demo {
 		width:800px;
-		height:1000px;
+		height:800px;
 	}
   .node{
     cursor: pointer;
