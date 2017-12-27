@@ -30,47 +30,67 @@ export default {
                   name: '子节点1-1',
                   children: [
                     {
-                      name: '子节点1-1-1'
+                      name: '子节点1-1-1',
+                      children: [
+                        {
+                          name: '子节点1-1-1'
+                        },
+                        {
+                          name: '子节点1-1-2'
+                        }
+                      ]
                     },
                     {
-                      name: '子节点1-1-2'
+                      name: '子节点1-1-2',
+                      children: [
+                        {
+                          name: '子节点1-1-1'
+                        },
+                        {
+                          name: '子节点1-1-2'
+                        }
+                      ]
                     }
                   ]
                 }
               ]
             },
             {
-              name: '子节点2',
+              name: 'testtesttesttesttesttesttesttesttesttesttesttesttesttest'
+            },
+            {
+              name: '子节点2子节点2子节点',
               id: '1-1',
               children: [
                 {
                   name: '子节点2-1',
                   children: [
                     {
-                      name: '子节点2-1'
+                      name: '子节点2-1-1'
                     },
                     {
-                      name: '子节点2-2'
+                      name: '子节点2-1-2'
                     }
                   ]
                 },
                 {
-                  name: '子节点2-2',
-                  children: [
-                    {
-                      name: '子节点2-1'
-                    },
-                    {
-                      name: '子节点2-2'
-                    }
-                  ]
+                  name: '子节点2-2'
+                },
+                {
+                  name: '子节点2-3'
                 }
               ]
+            },
+            {
+              name: 'testtesttesttesttesttesttest'
             },
             {
               name: '子节点3',
               id: '1-1',
               children: [
+                {
+                  name: '子节点3-1'
+                },
                 {
                   name: '子节点3-1'
                 }
@@ -192,12 +212,13 @@ export default {
             PosY = baseY + (item.leafCount - 1) * (root.height + _this.verticalSpace) / 2
           } else if (i > 0 && item.leafCount === 0) {
             let preNode = root.children[i - 1]
-            let base = preNode.y + (preNode.leafCount + 1) * (preNode.height + _this.verticalSpace) / 2
-            PosY = base + preNode.height
+            let perNodeLeaf = preNode.leafCount === 0 ? 1 : preNode.leafCount
+            let base = preNode.y + (perNodeLeaf + 1) * (preNode.height + _this.verticalSpace) / 2
+            PosY = base
           } else if (i > 0) {
             let preNode = root.children[i - 1]
-            let base = preNode.y + (preNode.leafCount + 1) * (preNode.height + _this.verticalSpace) / 2
-            // let base = 2 * root.children[i - 1].y - baseY + _this.verticalSpace + root.children[i - 1].height
+            let perNodeLeaf = preNode.leafCount === 0 ? 1 : preNode.leafCount
+            let base = preNode.y + (perNodeLeaf + 1) * (preNode.height + _this.verticalSpace) / 2
             PosY = base + (item.leafCount - 1) * (root.height + _this.verticalSpace) / 2
           }
           let node = _this.Node(item.name, item.id, item.leafCount, childNodesX, PosY)
