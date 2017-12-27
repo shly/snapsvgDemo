@@ -44,16 +44,37 @@ export default {
               id: '1-1',
               children: [
                 {
-                  name: '子节点2-1'
+                  name: '子节点2-1',
+                  children: [
+                    {
+                      name: '子节点2-1'
+                    },
+                    {
+                      name: '子节点2-2'
+                    }
+                  ]
                 },
                 {
-                  name: '子节点2-2'
+                  name: '子节点2-2',
+                  children: [
+                    {
+                      name: '子节点2-1'
+                    },
+                    {
+                      name: '子节点2-2'
+                    }
+                  ]
                 }
               ]
             },
             {
               name: '子节点3',
-              id: '1-1'
+              id: '1-1',
+              children: [
+                {
+                  name: '子节点3-1'
+                }
+              ]
             }
           ]
         }
@@ -151,31 +172,38 @@ export default {
     /** @description 将数据封装成节点对象,并赋予节点位置信息
      *  @augments data 要展示的流程数据
      *  @augments parentNode 父节点
-     *  @augments preCount 该节点前面有多少个叶子节点
      */
-    transformData (data, parentNode, preCount) {
+    transformData (data, parentNode) {
       let _this = this
       let root = null
       if (parentNode === null) {
         root = this.Node(data[0].name, data[0].id, data[0].leafCount, this.rootPosition.x, this.rootPosition.y)
         data = data[0].children
-        this.transformData(data, root, 0)
+        this.transformData(data, root)
       } else {
         root = parentNode
         let childNodesX = root.x + root.width + this.horizonSpace
         let baseY = root.y - (root.leafCount - 1) * (root.height + this.verticalSpace) / 2
         data.forEach(function (item, i) {
           let PosY = 0
-          if (item.leafCount === 0) {
-            PosY = baseY + i * (root.height + _this.verticalSpace)
-          } else {
-            PosY = baseY + (item.leafCount - 1 + 2 * preCount) * (root.height + _this.verticalSpace) / 2
+          if (i === 0 && item.leafCount === 0) {
+            PosY = baseY
+          } else if (i === 0) {
+            PosY = baseY + (item.leafCount - 1) * (root.height + _this.verticalSpace) / 2
+          } else if (i > 0 && item.leafCount === 0) {
+            let preNode = root.children[i - 1]
+            let base = preNode.y + (preNode.leafCount + 1) * (preNode.height + _this.verticalSpace) / 2
+            PosY = base + preNode.height
+          } else if (i > 0) {
+            let preNode = root.children[i - 1]
+            let base = preNode.y + (preNode.leafCount + 1) * (preNode.height + _this.verticalSpace) / 2
+            // let base = 2 * root.children[i - 1].y - baseY + _this.verticalSpace + root.children[i - 1].height
+            PosY = base + (item.leafCount - 1) * (root.height + _this.verticalSpace) / 2
           }
           let node = _this.Node(item.name, item.id, item.leafCount, childNodesX, PosY)
           root.children.push(node)
-          preCount += item.leafCount
           if (item.children && item.children.length > 0) {
-            _this.transformData(item.children, node, preCount)
+            _this.transformData(item.children, node)
           }
         })
       }
@@ -197,7 +225,7 @@ export default {
     init () {
       this.svgInstance = Snap('#svg')
       this.getLeafCount(this.data)
-      let root = this.transformData(this.data, null, 0)
+      let root = this.transformData(this.data, null)
       this.drawFlowChart(root)
     }
   },
