@@ -203,15 +203,17 @@ export default {
      */
     drawNode (node) {
       let _this = this
+      let text = this.svgInstance.text(node.x + 10, node.y + this.fontSize + 8, node.value).attr({
+        fontSize: this.fontSize,
+        fill: '#333333'
+      })
+      let textNode = text.node.getBBox()
+      node.width = textNode.width + 20
       let rect = this.svgInstance.rect(node.x, node.y, node.width, node.height, 2)
       rect.attr({
         fill: '#fff',
         stroke: '#333333',
         strokeWidth: 1
-      })
-      let text = this.svgInstance.text(node.x + 10, node.y + this.fontSize + 8, node.value).attr({
-        fontSize: this.fontSize,
-        fill: '#333333'
       })
       let g = this.svgInstance.g()
       g.add(rect, text)
@@ -279,13 +281,16 @@ export default {
         conditionNode.x = toNode.x - 3 * this.horizonSpace / 8 - conditionNode.width / 2
         conditionNode.y = toNode.y + 6
       }
-      let rect = this.svgInstance.rect(conditionNode.x, conditionNode.y, conditionNode.width, conditionNode.height, 2)
-      rect.attr({
-        fill: '#c7d3e1'
-      })
       let text = this.svgInstance.text(conditionNode.x + 5, conditionNode.y + this.fontSize + 2, conditionNode.value).attr({
         fontSize: this.conditionFontSize,
         fill: '#022a46'
+      })
+      // 节点宽度修正
+      let textNode = text.node.getBBox()
+      conditionNode.width = textNode.width + 10
+      let rect = this.svgInstance.rect(conditionNode.x, conditionNode.y, conditionNode.width, conditionNode.height, 2)
+      rect.attr({
+        fill: '#c7d3e1'
       })
       let g = this.svgInstance.g()
       g.add(rect, text)
