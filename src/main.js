@@ -3,6 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import ghpages from 'gh-pages'
+
+ghpages.publish('dist', function (err) {
+  console.log(err)
+})
 
 Vue.config.productionTip = false
 
